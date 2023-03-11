@@ -14,6 +14,9 @@ jobs:
         with:
           path: example-application
 
+      - name: Install sonar-scanner
+        uses: SonarSource/sonarcloud-github-c-cpp@v1
+
       - name: Initialize
         working-directory: example-application
         run: |
@@ -28,7 +31,23 @@ jobs:
       - name: Twister Tests
         working-directory: example-application
         run: |
-          ../zephyr/scripts/twister -G --board-root boards/ --testsuite-root ./tests/
+          ../zephyr/scripts/twister \
+            --ninja \
+            --board-root boards/ \
+            --platform native_posix \
+            --coverage \
+            --coverage-tool gcovr \
+            --coverage-formats sonarqube \
+            --testsuite-root ./tests/
+
+      - name: Run sonar-scanner
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+        run: |
+          sonar-scanner \
+            -X \
+            --define project.settings=manifest/sonar-project.properties
 
       - name: Archive firmware
         uses: actions/upload-artifact@v2
