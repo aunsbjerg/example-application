@@ -15,31 +15,29 @@ jobs:
           path: example-application
 
       - name: Initialize
-        working-directory: example-application
         run: |
           apt update && apt install --no-install-recommends --yes curl jq
-          west init -l .
+          west init -l example-application
+          west config build.cmake-args -- "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
           west update
 
       - name: Install sonar-scanner
         uses: SonarSource/sonarcloud-github-c-cpp@v1
 
       - name: Build firmware
-        working-directory: example-application
         run: |
-          west build -b custom_plank app
+          west build -b custom_plank example-application/app
 
       - name: Twister Tests
-        working-directory: example-application
         run: |
-          ../zephyr/scripts/twister \
+          zephyr/scripts/twister \
             --ninja \
-            --board-root boards/ \
+            --board-root example-application/boards/ \
             --platform native_posix \
             --coverage \
             --coverage-tool gcovr \
             --coverage-formats sonarqube \
-            --testsuite-root ./tests/
+            --testsuite-root example-application/tests/
 
       - name: Run sonar-scanner
         env:
@@ -52,8 +50,8 @@ jobs:
             --define project.settings=example-application.git/sonar-project.properties \
             -X
 
-      - name: Archive firmware
-        uses: actions/upload-artifact@v2
-        with:
-          name: firmware
-          path: example-application/build/zephyr/zephyr.*
+      # - name: Archive firmware
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: firmware
+      #     path: example-application/build/zephyr/zephyr.*
