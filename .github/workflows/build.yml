@@ -17,7 +17,7 @@ jobs:
       - name: Initialize
         working-directory: example-application
         run: |
-          apt update && apt install --no-install-recommends --yes curl jq fd
+          apt update && apt install --no-install-recommends --yes curl jq fd-find
           west init -l .
           west update
 
