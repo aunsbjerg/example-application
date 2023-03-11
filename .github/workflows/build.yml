@@ -14,14 +14,15 @@ jobs:
         with:
           path: example-application
 
-      - name: Install sonar-scanner
-        uses: SonarSource/sonarcloud-github-c-cpp@v1
-
       - name: Initialize
         working-directory: example-application
         run: |
+          apt update && apt install --no-install-recommends --yes curl
           west init -l .
           west update
+
+      - name: Install sonar-scanner
+        uses: SonarSource/sonarcloud-github-c-cpp@v1
 
       - name: Build firmware
         working-directory: example-application
