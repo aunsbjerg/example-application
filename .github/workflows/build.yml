@@ -46,9 +46,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         run: |
+          jq -s 'add' $(fd compile_commands.json twister-out/native_posix/) > compile_commands.json
+          
           sonar-scanner \
-            -X \
-            --define project.settings=manifest/sonar-project.properties
+            --define project.settings=example-application.git/sonar-project.properties \
+            -X
 
       - name: Archive firmware
         uses: actions/upload-artifact@v2
