@@ -47,7 +47,7 @@ jobs:
           jq -s 'add' $(find twister-out/native_posix -name compile_commands.json) > compile_commands.json 
           ls
           sonar-scanner \
-            --define project.settings=example-application.git/sonar-project.properties \
+            --define project.settings=example-application/sonar-project.properties \
             -X
 
       # - name: Archive firmware
