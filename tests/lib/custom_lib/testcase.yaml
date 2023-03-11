@@ -3,6 +3,7 @@ common:
   integration_platforms:
     - custom_plank
     - qemu_cortex_m0
+    - native_posix
 tests:
   lib.custom_lib: {}
   lib.custom_lib.non_default:
